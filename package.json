@@ -1,0 +1,15 @@
+{
+  "name": "Euro 2.0 BIP-70",
+  "version": "1",
+  "description": "Euro 2.0 BIP 70",
+  "scripts": {
+    "build": ""
+  },
+  "main": "index.js",
+  "dependencies": {
+    "bitcore-lib": "^0.14.0",
+    "bitcore-payment-protocol": "^1.2.2"
+  },
+  "devDependencies": {},
+  "license": "MIT"
+}
