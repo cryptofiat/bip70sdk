@@ -11,12 +11,18 @@ var now = Date.now() / 1000 | 0;
 
 // construct address
 var address = Address.fromString(requestorAddress);
+console.log(address)
 var script = Script.buildPublicKeyHashOut(address);
-
+console.log(script)
 // constructing outputs
 var outputs = new PaymentProtocol().makeOutput();
 outputs.set('amount', 1);
 outputs.set('script', script.toBuffer());
+
+console.log("SCRIPT:");
+console.log(script);
+console.log("BUFFER:");
+console.log(script.toBuffer());
 
 // construct the payment details
 var details = new PaymentProtocol().makePaymentDetails();
@@ -27,6 +33,7 @@ details.set('expires', now + 60 * 60 * 24);
 details.set('memo', 'A payment request from the merchant.');
 details.set('payment_url', 'https://localhost/-/pay');
 details.set('merchant_data', new Buffer(7)); // identify the request
+
 
 var certificates = new PaymentProtocol().makeX509Certificates();
 certificates.set('certificate',
@@ -142,16 +149,24 @@ console.log(request.deserialize(rawbody));
 
 var axios = require('axios/lib/axios');
 
-axios.post(appUrl + restEndpoint, rawbody,
-      { 
-      	// responseType: 'arraybuffer',
-      	responseType: 'string',
-      	headers: {'Content-Type': 'application/octet-stream'}
-      	// headers: {'Content-Type': 'application/x-protobuf'}
-      }
-    ).then(function (response) {
-      console.log(response)
-    })
+var querystring = require('querystring');
+
+// axios.post(appUrl + restEndpoint, rawbody,
+// axios.post(appUrl + restEndpoint, rawbody.toString('hex'),
+axios.post(appUrl + restEndpoint,
+    querystring.stringify({
+        requestHex: rawbody.toString('hex')
+    }),
+    {
+        // responseType: 'arraybuffer',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        responseType: 'string',
+        // headers: {'Content-Type': 'application/octet-stream'},
+        // headers: {'Content-Type': 'application/x-protobuf'}
+    }
+).then(function (response) {
+    console.log(response)
+})
     .catch(function (response) {
-      console.log(response)
-	})
+        console.log(response)
+    })
